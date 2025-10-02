@@ -3,6 +3,7 @@
 [![Made with Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-blue.svg)](https://flask.palletsprojects.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/badge/GitHub-NLP--team5-blue)](https://github.com/NLP-team5)
 
 **인터랙티브 연애 시뮬레이션 게임** - 다양한 시나리오를 통해 선택이 관계에 미치는 영향을 체험해보세요!
 
