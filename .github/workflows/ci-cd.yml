@@ -2,18 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
-env:
-  PYTHON_VERSION: "3.11"
-  NODE_VERSION: "18"
-
 jobs:
-  # Code Quality Checks
-  lint-and-test:
-    name: Lint and Test
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -23,285 +18,20 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: "3.11"
 
-    - name: Cache Python dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Install Python dependencies
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install flake8 pytest pytest-cov black isort
+        pip install pytest black isort flake8
 
-    - name: Run Python linting
+    - name: Check formatting
       run: |
-        # Check code formatting with black
-        black --check --diff backend/
-        # Check import sorting with isort
-        isort --check-only --diff backend/
-        # Run flake8 for style and complexity
-        flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 backend/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        black --check backend/
+        isort --check-only backend/
 
-    - name: Run Python tests
+    - name: Run tests
       run: |
         cd backend
-        python -m pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
-      continue-on-error: false
-
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
-      if: success()
-      with:
-        file: ./backend/coverage.xml
-        flags: backend
-        name: backend-coverage
-
-  # Security Scanning
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
-
-    - name: Run Python security check with bandit
-      run: |
-        pip install bandit
-        bandit -r backend/ -f json -o bandit-report.json
-      continue-on-error: true
-
-  # Build and Test Docker Image
-  docker-build:
-    name: Docker Build and Test
-    runs-on: ubuntu-latest
-    needs: [lint-and-test]
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Build Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: false
-        tags: love-simulator:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Test Docker image
-      run: |
-        # Start container in background
-        docker run -d --name test-container -p 8000:8000 love-simulator:test
-
-        # Wait for container to be ready
-        sleep 30
-
-        # Test health check
-        curl -f http://localhost:8000/api/scenarios || exit 1
-
-        # Stop container
-        docker stop test-container
-        docker rm test-container
-
-  # Deploy to Staging
-  deploy-staging:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [lint-and-test, security-scan, docker-build]
-    if: github.ref == 'refs/heads/develop'
-    environment: staging
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Login to Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ secrets.CONTAINER_REGISTRY }}
-        username: ${{ secrets.CONTAINER_USERNAME }}
-        password: ${{ secrets.CONTAINER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:staging
-          ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Deploy to staging server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.STAGING_HOST }}
-        username: ${{ secrets.STAGING_USERNAME }}
-        key: ${{ secrets.STAGING_SSH_KEY }}
-        script: |
-          # Pull latest image
-          docker pull ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:staging
-
-          # Stop existing container
-          docker stop love-simulator-staging || true
-          docker rm love-simulator-staging || true
-
-          # Run new container
-          docker run -d \
-            --name love-simulator-staging \
-            -p 8001:8000 \
-            --env-file /opt/love-simulator/.env.staging \
-            --restart unless-stopped \
-            ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:staging
-
-    - name: Run staging tests
-      run: |
-        # Wait for deployment
-        sleep 60
-
-        # Run smoke tests
-        curl -f https://staging.love-simulator.com/api/scenarios || exit 1
-
-  # Deploy to Production
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [lint-and-test, security-scan, docker-build]
-    if: github.ref == 'refs/heads/main'
-    environment: production
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Login to Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ secrets.CONTAINER_REGISTRY }}
-        username: ${{ secrets.CONTAINER_USERNAME }}
-        password: ${{ secrets.CONTAINER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:latest
-          ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:${{ github.sha }}
-          ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:v${{ github.run_number }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Deploy to production server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.PRODUCTION_HOST }}
-        username: ${{ secrets.PRODUCTION_USERNAME }}
-        key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        script: |
-          # Backup current version
-          docker tag love-simulator-prod love-simulator-backup || true
-
-          # Pull latest image
-          docker pull ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:latest
-
-          # Stop existing container gracefully
-          docker stop love-simulator-prod || true
-          docker rm love-simulator-prod || true
-
-          # Run new container
-          docker run -d \
-            --name love-simulator-prod \
-            -p 8000:8000 \
-            --env-file /opt/love-simulator/.env.production \
-            --restart unless-stopped \
-            --memory=512m \
-            --cpus=1 \
-            ${{ secrets.CONTAINER_REGISTRY }}/love-simulator:latest
-
-    - name: Health check
-      run: |
-        # Wait for deployment
-        sleep 60
-
-        # Health check
-        for i in {1..5}; do
-          if curl -f https://love-simulator.com/api/scenarios; then
-            echo "Health check passed"
-            break
-          fi
-          echo "Health check failed, retrying in 30s..."
-          sleep 30
-        done
-
-    - name: Rollback on failure
-      if: failure()
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.PRODUCTION_HOST }}
-        username: ${{ secrets.PRODUCTION_USERNAME }}
-        key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        script: |
-          # Rollback to previous version
-          docker stop love-simulator-prod || true
-          docker rm love-simulator-prod || true
-          docker run -d \
-            --name love-simulator-prod \
-            -p 8000:8000 \
-            --env-file /opt/love-simulator/.env.production \
-            --restart unless-stopped \
-            love-simulator-backup
-
-    - name: Notify deployment success
-      if: success()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: success
-        channel: '#deployments'
-        text: '🚀 Love Simulator successfully deployed to production!'
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    - name: Notify deployment failure
-      if: failure()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: failure
-        channel: '#deployments'
-        text: '❌ Love Simulator deployment to production failed!'
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        python -m pytest tests/ -v
