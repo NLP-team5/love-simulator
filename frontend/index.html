@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="인터랙티브 연애 시뮬레이션 게임 - 당신의 선택이 만들어가는 이야기">
+    <meta name="keywords" content="게임, 시뮬레이션, 연애, 인터랙티브, 스토리">
+    <meta name="author" content="shinjuyong">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Love Simulator - 연애 시뮬레이션 게임">
+    <meta property="og:description" content="다양한 시나리오를 통해 선택이 관계에 미치는 영향을 체험해보세요!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://love-simulator.com">
+    <meta property="og:image" content="/images/og-image.png">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Love Simulator">
+    <meta name="twitter:description" content="인터랙티브 연애 시뮬레이션 게임">
+    <meta name="twitter:image" content="/images/twitter-card.png">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#FF6B9D">
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/manifest.json">
+
+    <title>Love Simulator 💖 - 연애 시뮬레이션 게임</title>
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="simple-app.js" as="script">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Critical CSS Inline (Production only) -->
+    <style>
+        /* Critical above-the-fold styles */
+        body { margin: 0; font-family: 'Noto Sans KR', sans-serif; }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF6B9D, #4ECDC4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Application Container -->
+    <div id="app-container" class="app-container">
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active" role="main">
+            <div class="start-content">
+                <header class="start-title">
+                    <span>Welcome to</span>
+                    <span class="highlight">Love Simulator</span>
+                </header>
+                <p class="start-subtitle">당신의 선택이 만들어가는 이야기</p>
+
+                <main class="scenario-selection">
+                    <h2>시나리오 선택</h2>
+                    <div class="scenario-cards" role="list">
+                        <article class="scenario-card"
+                                 role="listitem"
+                                 tabindex="0"
+                                 data-scenario="female-friend"
+                                 aria-label="여사친 시나리오 선택">
+                            <div class="card-image">
+                                <img src="images/female_friend_main.png"
+                                     onerror="this.src='https://via.placeholder.com/300x150/FF6B9D/FFFFFF?text=여사친'"
+                                     alt="친구에서 연인으로"
+                                     loading="lazy">
+                            </div>
+                            <div class="card-content">
+                                <h3>친구에서 연인으로 (여사친)</h3>
+                                <p class="card-description">실제 데이터를 기반으로 재구성된 10단계의 깊이 있는 관계 발전 시뮬레이션입니다.</p>
+                                <span class="difficulty-badge hard" aria-label="난이도 3단계">난이도: ★★★</span>
+                                <button class="play-button" aria-label="여사친 시나리오 시작">
+                                    <span>시작하기</span>
+                                    <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </article>
+
+                        <article class="scenario-card"
+                                 role="listitem"
+                                 tabindex="0"
+                                 data-scenario="male-friend"
+                                 aria-label="남사친 시나리오 선택">
+                            <div class="card-image">
+                                <img src="images/male_friend_main.png"
+                                     onerror="this.src='https://via.placeholder.com/300x150/4CAF50/FFFFFF?text=남사친'"
+                                     alt="친구에서 연인으로"
+                                     loading="lazy">
+                            </div>
+                            <div class="card-content">
+                                <h3>친구에서 연인으로 (남사친)</h3>
+                                <p class="card-description">실제 데이터를 기반으로 재구성된 10단계의 깊이 있는 관계 발전 시뮬레이션입니다.</p>
+                                <span class="difficulty-badge hard" aria-label="난이도 3단계">난이도: ★★★</span>
+                                <button class="play-button" aria-label="남사친 시나리오 시작">
+                                    <span>시작하기</span>
+                                    <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </article>
+
+                        <article class="scenario-card"
+                                 role="listitem"
+                                 tabindex="0"
+                                 data-scenario="teacher"
+                                 aria-label="선생님 시나리오 선택">
+                            <div class="card-image">
+                                <img src="images/teacher_main.png"
+                                     onerror="this.src='https://via.placeholder.com/300x150/2196F3/FFFFFF?text=선생님'"
+                                     alt="선생님"
+                                     loading="lazy">
+                            </div>
+                            <div class="card-content">
+                                <h3>NLP반 김민수 강사님</h3>
+                                <p class="card-description">데이터와 포켓몬을 사랑하는 괴짜 천재, 김민수 강사님의 최애 제자가 되기 위한 여정.</p>
+                                <span class="difficulty-badge hard" aria-label="난이도 3단계">난이도: ★★★</span>
+                                <button class="play-button" aria-label="선생님 시나리오 시작">
+                                    <span>시작하기</span>
+                                    <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </main>
+
+                <footer class="start-footer">
+                    <button id="show-ranking-button" class="secondary-button" aria-label="랭킹 화면으로 이동">
+                        🏆 랭킹 보기
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-container" class="screen" role="main" aria-label="게임 화면">
+            <div class="game-content">
+                <!-- Status Bar -->
+                <div class="status-bar" role="banner">
+                    <span class="scene-counter" id="scene-number" aria-live="polite">Scene 1</span>
+                    <div class="favorability-container" role="region" aria-label="호감도 정보">
+                        <span class="heart-icon" aria-hidden="true">❤️</span>
+                        <div class="favorability-bar-wrapper">
+                            <div class="favorability-bar-background" role="progressbar"
+                                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" aria-label="호감도">
+                                <div class="favorability-bar" id="favorability-bar" style="width: 50%;">
+                                    <div class="favorability-glow"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="favorability-score" id="favorability-score" aria-live="polite">50</span>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-button" id="pause-button" aria-label="게임 일시정지">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                                <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                            </svg>
+                        </button>
+                        <button id="sound-toggle-button" class="control-button" aria-label="사운드 토글">
+                            <span aria-hidden="true">🔊</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Character Area -->
+                <div class="character-area" role="region" aria-label="캐릭터 영역">
+                    <div class="character-container">
+                        <img id="character-image"
+                             class="character-image"
+                             src=""
+                             alt="상대 캐릭터"
+                             loading="eager">
+                        <div class="character-mood" id="character-mood" aria-live="polite" aria-label="캐릭터 감정">😐</div>
+                    </div>
+                </div>
+
+                <!-- Dialogue Area -->
+                <div class="dialogue-area" role="region" aria-label="대화 영역">
+                    <div class="dialogue-box">
+                        <div class="dialogue-character-name" id="character-name"></div>
+                        <div class="dialogue-content">
+                            <p id="ai-line" class="dialogue-text" aria-live="polite"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Choices Container -->
+                <div id="user-cards"
+                     class="choice-cards-container"
+                     role="region"
+                     aria-label="선택지 영역"
+                     aria-live="polite"></div>
+            </div>
+
+            <!-- Pause Menu -->
+            <div id="pause-menu" class="pause-menu hidden" role="dialog" aria-label="일시정지 메뉴">
+                <div class="pause-content">
+                    <h3>일시정지</h3>
+                    <nav class="pause-nav">
+                        <button id="resume-game" class="menu-button" aria-label="게임 재개">게임 재개</button>
+                        <button id="restart-game" class="menu-button" aria-label="게임 다시 시작">다시 시작</button>
+                        <button id="back-to-main" class="menu-button" aria-label="메인 화면으로 이동">메인 화면으로</button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen" role="main" aria-label="결과 화면">
+            <div class="result-content">
+                <h2 id="result-title" class="result-title">결과</h2>
+
+                <div id="score-circle" class="score-circle" role="img" aria-label="최종 점수">
+                    <svg class="score-ring" viewBox="0 0 36 36" aria-hidden="true">
+                        <path class="score-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path id="score-ring-fill" class="score-ring-fill" stroke-dasharray="50, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div id="final-score" class="final-score-number" aria-live="polite">50</div>
+                </div>
+
+                <p id="final-advice" class="final-advice">결과 분석 중...</p>
+
+                <div class="result-analysis" role="region" aria-label="선택 분석">
+                    <div class="analysis-card best" role="article">
+                        <h4>✨ 좋은 선택</h4>
+                        <p id="best-choice-text">""</p>
+                        <span id="best-choice-score" class="choice-score positive">+0점</span>
+                    </div>
+                    <div class="analysis-card worst" role="article">
+                        <h4>😔 아쉬운 선택</h4>
+                        <p id="worst-choice-text">""</p>
+                        <span id="worst-choice-score" class="choice-score negative">-0점</span>
+                    </div>
+                </div>
+
+                <div class="ranking-submission" role="region" aria-label="랭킹 등록">
+                    <label for="nickname-input" class="sr-only">닉네임 입력</label>
+                    <input type="text"
+                           id="nickname-input"
+                           placeholder="닉네임을 입력하세요 (2-20자)"
+                           maxlength="20"
+                           aria-describedby="nickname-help">
+                    <div id="nickname-help" class="sr-only">2자에서 20자 사이의 닉네임을 입력해주세요. 한글, 영문, 숫자, 밑줄, 공백만 사용 가능합니다.</div>
+                    <button id="submit-ranking-button" class="submit-button" aria-label="랭킹에 점수 등록">
+                        <span>랭킹 등록</span>
+                        <svg viewBox="0 0 24 24" class="arrow-icon" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="result-actions" role="navigation" aria-label="결과 화면 액션">
+                    <button id="restart-scenario" class="action-button" aria-label="같은 시나리오 다시 시작">다시하기</button>
+                    <button id="back-to-main-result" class="action-button" aria-label="메인 화면으로 이동">메인으로</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranking Screen -->
+        <div id="ranking-screen" class="screen" role="main" aria-label="랭킹 화면">
+            <div class="ranking-content">
+                <header class="ranking-header">
+                    <h2 class="ranking-title">
+                        <span class="trophy-icon" aria-hidden="true">🏆</span>
+                        명예의 전당
+                        <span class="trophy-icon" aria-hidden="true">🏆</span>
+                    </h2>
+                    <nav class="ranking-tabs" role="tablist" aria-label="랭킹 카테고리">
+                        <button class="tab-button active"
+                                data-tab="all"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="ranking-items">전체</button>
+                        <button class="tab-button"
+                                data-tab="female-friend"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="ranking-items">여사친</button>
+                        <button class="tab-button"
+                                data-tab="male-friend"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="ranking-items">남사친</button>
+                        <button class="tab-button"
+                                data-tab="teacher"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="ranking-items">선생님</button>
+                    </nav>
+                </header>
+
+                <main class="ranking-list" role="tabpanel" aria-labelledby="ranking-title">
+                    <div class="ranking-item-header" role="row">
+                        <span role="columnheader">순위</span>
+                        <span role="columnheader">닉네임</span>
+                        <span role="columnheader">시나리오</span>
+                        <span role="columnheader">점수</span>
+                    </div>
+                    <div id="ranking-items"
+                         class="ranking-items"
+                         role="table"
+                         aria-label="랭킹 목록"
+                         aria-live="polite"></div>
+                </main>
+
+                <footer>
+                    <button id="back-to-main-button" class="back-button" aria-label="메인 화면으로 돌아가기">
+                        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        메인 화면으로
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen hidden" role="status" aria-label="로딩 중">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <span class="sr-only">게임을 로딩하고 있습니다...</span>
+        </div>
+
+        <!-- Toast Container for Messages -->
+        <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <!-- Screen Reader Only Content -->
+    <div class="sr-only">
+        <h1>Love Simulator - 인터랙티브 연애 시뮬레이션 게임</h1>
+        <p>이 게임은 키보드와 마우스로 조작할 수 있습니다. 숫자키 1-9로 선택지를 빠르게 선택할 수 있고, ESC키로 일시정지할 수 있습니다.</p>
+    </div>
+
+    <!-- Skip Link for Screen Readers -->
+    <a href="#app-container" class="skip-link">메인 컨텐츠로 건너뛰기</a>
+
+    <!-- Simple JavaScript Application -->
+    <script src="simple-app.js"></script>
+
+    <!-- Analytics (Production only) -->
+    <script>
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // Google Analytics 또는 다른 분석 도구 삽입
+            console.log('Production environment - Analytics enabled');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+# Docker ignore file for Love Simulator
+
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Flask
+instance/
+.flaskenv
+
+# Development database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+
+# Environment variables (will be set via docker-compose)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Node modules (if any)
+node_modules/
+.npm
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Claude Code settings
+.claude/
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Docker files (no need to copy these into the image)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Development scripts
+scripts/dev/
+
+# Large media files that should be optimized
+# Uncomment if you have large assets
+# images/*.png
+# sounds/*.mp3

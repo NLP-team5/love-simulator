@@ -1,0 +1,34 @@
+{
+  "name": "love-simulator",
+  "version": "1.0.0",
+  "description": "Interactive love simulation game with multiple scenarios",
+  "main": "frontend/index.html",
+  "scripts": {
+    "start": "cd backend && python app.py",
+    "dev": "cd backend && python app.py",
+    "setup": "cd backend && python -m pip install -r ../requirements.txt",
+    "seed": "cd backend && python seed.py",
+    "clean": "find . -name '*.pyc' -delete && find . -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true"
+  },
+  "keywords": [
+    "game",
+    "simulation",
+    "interactive",
+    "romance",
+    "choice-based",
+    "web-game"
+  ],
+  "author": "shinjuyong",
+  "license": "MIT",
+  "engines": {
+    "python": ">=3.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/love-simulator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/love-simulator/issues"
+  },
+  "homepage": "https://github.com/yourusername/love-simulator#readme"
+}
