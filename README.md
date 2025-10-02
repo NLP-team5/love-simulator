@@ -1,4 +1,4 @@
-# 💖 Love Simulator
+# Love Simulator
 
 [![Made with Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-blue.svg)](https://flask.palletsprojects.com/)
@@ -6,7 +6,7 @@
 
 **인터랙티브 연애 시뮬레이션 게임** - 다양한 시나리오를 통해 선택이 관계에 미치는 영향을 체험해보세요!
 
-## ✨ 주요 특징
+## 주요 특징
 
 - **3가지 독립적인 스토리라인**: 여사친, 남사친, 선생님 시나리오
 - **실시간 호감도 시스템**: 선택에 따른 즉각적인 시각적 피드백
@@ -15,7 +15,7 @@
 - **부드러운 애니메이션**: 몰입감 있는 UI/UX 경험
 - **반응형 디자인**: 모바일과 데스크톱 모두 지원
 
-## 🛠 기술 스택
+## 기술 스택
 
 ### Frontend
 - **Core**: HTML5, CSS3, Vanilla JavaScript
@@ -38,7 +38,7 @@
 - **Monitoring**: Health checks, Uptime monitoring
 - **Reverse Proxy**: Nginx with SSL termination
 
-## 🚀 설치 및 실행
+## 설치 및 실행
 
 ### 1. 저장소 클론
 ```bash
@@ -68,7 +68,7 @@ python app.py
 ### 5. 프론트엔드 접속
 브라우저에서 `http://localhost:8000`로 접속하면 게임을 플레이할 수 있습니다.
 
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
 love-simulator/
@@ -100,7 +100,7 @@ love-simulator/
     └── .gitignore        # Git 무시 파일
 ```
 
-## 🎯 게임 플레이
+## 게임 플레이
 
 1. **시나리오 선택**: 메인 화면에서 원하는 시나리오를 선택
 2. **대화 진행**: AI 캐릭터와의 대화에서 선택지를 고름
@@ -108,7 +108,7 @@ love-simulator/
 4. **엔딩 확인**: 최종 점수와 결과 분석 확인
 5. **랭킹 등록**: 닉네임을 입력하여 랭킹에 등록
 
-## 🏆 업적 시스템
+## 업적 시스템
 
 - **첫 만남**: 첫 게임 시작
 - **완벽한 사랑**: 호감도 100 달성
@@ -116,7 +116,7 @@ love-simulator/
 - **탐험가**: 모든 시나리오 플레이
 - 그 외 다양한 숨겨진 업적들...
 
-## ⚡ 성능 최적화 권장사항
+## 성능 최적화 권장사항
 
 ### 이미지 최적화
 현재 캐릭터 이미지 파일들이 1.6MB+ 크기입니다. 프로덕션 배포 시 다음 최적화를 권장합니다:
@@ -136,7 +136,7 @@ pngquant --quality=65-80 image.png
 - [ ] CDN 적용 고려
 - [ ] 데이터베이스 백업 전략 수립
 
-## 🔧 개발 정보
+## 개발 정보
 
 ### API 엔드포인트
 - `GET /api/scenarios` - 시나리오 목록 조회
@@ -144,7 +144,7 @@ pngquant --quality=65-80 image.png
 - `GET /api/rankings` - 랭킹 조회
 - `POST /api/rankings` - 랭킹 등록
 
-## 🚀 배포
+## 배포
 
 ### Docker를 사용한 간편 배포
 
@@ -183,11 +183,11 @@ docker run -d \
 - `ALLOWED_ORIGINS`: CORS 허용 도메인
 - `LOG_LEVEL`: 로그 레벨 (INFO/WARNING/ERROR)
 
-## 📝 라이선스
+## 라이선스
 
 이 프로젝트는 개인 학습 목적으로 제작되었습니다.
 
-## 🤝 기여하기
+## 기여하기
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -195,9 +195,9 @@ docker run -d \
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 👥 개발팀
+## 개발팀
 
-### 🏆 Core Team
+### Core Team
 - **신주용** ([@kimddong23](https://github.com/kimddong23)) - PM & Full-stack Developer
 - **김현웅** ([@KimHW1999](https://github.com/KimHW1999)) - Data Engineer & AI Specialist
 - **김남현** ([@KIMNAMHYEON](https://github.com/KIMNAMHYEON)) - Data Collector & Visual Designer
@@ -205,6 +205,6 @@ docker run -d \
 
 자세한 기여 내역은 [AUTHORS.md](./AUTHORS.md)를 참조하세요.
 
-## 📞 문의
+## 문의
 
 프로젝트에 대한 문의사항이 있으시면 이슈를 등록해 주세요.
